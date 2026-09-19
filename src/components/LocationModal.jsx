@@ -1,6 +1,14 @@
-import { X } from "lucide-react";
+import { X, LocateFixed } from "lucide-react";
+import { useState } from "react";
 
 const LocationModal = ({ setlocationModal }) => {
+  const [city, setCity] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const value = city.trim();
+    console.log(value);
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-950/60">
       <div className="h-[300px] w-[400px] bg-white p-6 rounded-2xl shadow-2xl relative">
@@ -12,9 +20,29 @@ const LocationModal = ({ setlocationModal }) => {
         >
           <X />
         </button>
-        <h2 className="text-xl font-medium mb-4">
-          Please enter your location:{" "}
-        </h2>
+        <h2 className="text-xl font-medium mb-4">What's your location?</h2>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <input
+              placeholder="Enter city name"
+              type="text"
+              className="w-full border py-2 px-3 rounded-2xl"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="w-full mt-4 bg-blue-500 text-white font-medium py-2 px-5 rounded-2xl hover:bg-blue-700"
+            >
+              Get Weather
+            </button>
+          </form>
+          <p className="text-center text-gray-500 mt-4">Or</p>
+
+          <button className="w-full flex items-center justify-center gap-2 mt-4 bg-blue-500 text-white font-medium py-2 px-5 rounded-2xl hover:bg-blue-700">
+            Use my location <LocateFixed />
+          </button>
+        </div>
       </div>
     </div>
   );
