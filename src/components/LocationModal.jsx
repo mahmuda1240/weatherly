@@ -9,6 +9,21 @@ const LocationModal = ({ setlocationModal }) => {
     const value = city.trim();
     console.log(value);
   };
+
+  const handleGeoLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+      },
+      (error) => {
+        console.error("Error getting geolocation:", error.message);
+      },
+      {
+        timeout: 3000, // Set a timeout for the geolocation request (in milliseconds)
+      },
+    );
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-950/60">
       <div className="h-[300px] w-[400px] bg-white p-6 rounded-2xl shadow-2xl relative">
@@ -39,7 +54,10 @@ const LocationModal = ({ setlocationModal }) => {
           </form>
           <p className="text-center text-gray-500 mt-4">Or</p>
 
-          <button className="w-full flex items-center justify-center gap-2 mt-4 bg-blue-500 text-white font-medium py-2 px-5 rounded-2xl hover:bg-blue-700">
+          <button
+            onClick={handleGeoLocation}
+            className="w-full flex items-center justify-center gap-2 mt-4 bg-blue-500 text-white font-medium py-2 px-5 rounded-2xl hover:bg-blue-700"
+          >
             Use my location <LocateFixed />
           </button>
         </div>
