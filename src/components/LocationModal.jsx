@@ -1,13 +1,18 @@
 import { X, LocateFixed } from "lucide-react";
 import { useState } from "react";
+import { getGeoLocation } from "../services/getGeoLocation";
 
 const LocationModal = ({ setlocationModal }) => {
   const [city, setCity] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const value = city.trim();
-    console.log(value);
+    try {
+      const location = await getGeoLocation(value);
+    } catch (error) {
+      console.error("Error fetching geolocation:", error.message);
+    }
   };
 
   const handleGeoLocation = () => {
