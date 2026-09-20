@@ -1,17 +1,32 @@
 import { X, LocateFixed } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { getGeoLocation } from "../services/getGeoLocation";
 
 const LocationModal = ({ setlocationModal }) => {
   const [city, setCity] = useState("");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const goToPage = (location) => {
+    navigate("/weather", { state: { location } });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const value = city.trim();
+    if (!value) {
+      setError("Please enter a city name.");
+      return;
+    }
     try {
       const location = await getGeoLocation(value);
+      if (!location) {
+        setError("GeoLocation request failed");
+      }
+      goToPage(location);
     } catch (error) {
-      console.error("Error fetching geolocation:", error.message);
+      setError("Error fetching geolocation: " + error.message);
     }
   };
 
@@ -19,10 +34,14 @@ const LocationModal = ({ setlocationModal }) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        goToPage({
+          name: "Current Location",
+          latitude: latitude,
+          longitude: longitude,
+        });
       },
       (error) => {
-        console.error("Error getting geolocation:", error.message);
+        setError(error.message);
       },
       {
         timeout: 3000, // Set a timeout for the geolocation request (in milliseconds)
@@ -31,7 +50,7 @@ const LocationModal = ({ setlocationModal }) => {
   };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-950/60">
-      <div className="h-[300px] w-[400px] bg-white p-6 rounded-2xl shadow-2xl relative">
+      <div className="h-auto w-[400px] bg-white p-6 rounded-2xl shadow-2xl relative">
         <button
           aria-label="Close location dialog"
           type="button"
@@ -66,6 +85,9 @@ const LocationModal = ({ setlocationModal }) => {
             Use my location <LocateFixed />
           </button>
         </div>
+        {error && (
+          <p className="text-red-500 font-semibold text-center mt-2">{error}</p>
+        )}
       </div>
     </div>
   );
